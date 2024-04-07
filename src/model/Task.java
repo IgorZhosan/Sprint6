@@ -1,37 +1,43 @@
 package model;
+
 public class Task {
-    private String title;
-    private String description;
-    private long id;
+    private final String title;
+    private final String description;
+    private static int id = 0;
+    private final int idTask;
     private Status status = Status.NEW;
 
-
-    public Task(String title, String description, long id) {
+    public Task(String title, String description) {
         this.title = title;
         this.description = description;
-        this.id = id;
+        this.idTask = generateId();
     }
 
-    public Task(String title, String description, long id, Status status) {
+    public Task(String title) {
+        this.title = title;
+        this.description = null;
+        this.idTask = generateId();
+    }
+
+    public Task(String title, String description, Status status) {
         this.title = title;
         this.description = description;
-        this.id = id;
+        this.idTask = generateId();
         this.status = status;
     }
 
-    public long getId() {
-        return id;
+    private int generateId() {
+        return ++id;
+    }
+
+
+    public int getId() {
+        return idTask;
     }
 
     public String getTitle() {
         return title;
     }
-
-
-    public String getDescription() {
-        return description;
-    }
-
 
     public Status getStatus() {
         return status;
@@ -39,5 +45,15 @@ public class Task {
 
     public void setStatus(Status status) {
         this.status = status;
+    }
+
+    @Override
+    public String toString() {
+        return "Task{" +
+                "title='" + title + '\'' +
+                ", description='" + description + '\'' +
+                ", id=" + idTask +
+                ", status=" + status +
+                '}';
     }
 }
