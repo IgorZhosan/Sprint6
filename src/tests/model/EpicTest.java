@@ -1,8 +1,9 @@
 package tests.model;
 
 import model.Epic;
-import org.junit.Assert;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 
 class EpicTest {
 
@@ -13,6 +14,6 @@ class EpicTest {
         String[] epicsCorrect = new String[2];
         epicsCorrect[0] = epic.getTitle();
         epicsCorrect[1] = epic.getDescription();
-        Assert.assertArrayEquals(epics, epicsCorrect);
+        assertArrayEquals(epics, epicsCorrect);
     }
 }

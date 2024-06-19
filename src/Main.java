@@ -6,12 +6,14 @@ import service.*;
 
 public class Main {
     public static void main(String[] args) {
-
         Manager manager = new Manager();
         TaskManager taskManager = manager.getDefault();
+        HistoryManager historyManager = manager.getHistoryManager();
+
+        // Ваш существующий код
         System.out.println("=========Эпики======");
 
-        Epic epic = new Epic("Убраться в квартире", "Бысто"); // Создали эпик
+        Epic epic = new Epic("Убраться в квартире", "Быстро"); // Создали эпик
         SubTask subTask1 = new SubTask("Помыть посуду", "10 тарелок", epic.getId()); // Создали подзадачу1 для эпика 1
         SubTask subTask2 = new SubTask("Постирать вещи", "шерсть", epic.getId()); // Создали подзадачу2 для эпика 1
         taskManager.createTask(epic); // добавили эпик в epics
@@ -39,7 +41,6 @@ public class Main {
         System.out.println(taskManager.getEpicById(epic2.getId()));
         System.out.println(taskManager.getEpicById(epic2.getId()));
         System.out.println("=========Таски========");
-
 
         Task task = new Task("Поесть", "Суп");
         taskManager.createTask(task);
@@ -70,6 +71,7 @@ public class Main {
         System.out.println(taskManager.getEpicById(epic2.getId()));
         taskManager.removeAllSubTasks();
         System.out.println(taskManager.getEpicById(epic2.getId()));
+
         Task task5 = new Task("Убрать сад", "Сегодня");
         Task task6 = new Task("Убрать огород", "Сегодня");
         Task task2 = new Task("Убрать машину", "Сегодня");
@@ -106,5 +108,61 @@ public class Main {
         System.out.println(taskManager.getTaskById(task12.getId()));
         System.out.println(taskManager.getHistory());
         System.out.println(taskManager.getHistory().size());
+
+        // === Новый пользовательский сценарий ===
+        System.out.println("=== Новый пользовательский сценарий ===");
+
+        // Создаём задачи
+        Task newTask1 = new Task("Новая Задача 1", "Новое Описание 1");
+        Task newTask2 = new Task("Новая Задача 2", "Новое Описание 2");
+        taskManager.createTask(newTask1);
+        taskManager.createTask(newTask2);
+
+        // Создаём эпик с тремя подзадачами
+        Epic newEpic1 = new Epic("Новый Эпик 1", "Новое Описание эпика 1");
+        taskManager.createTask(newEpic1);
+        SubTask newSubTask1 = new SubTask("Новая Подзадача 1", "Новое Описание подзадачи 1", newEpic1.getId());
+        SubTask newSubTask2 = new SubTask("Новая Подзадача 2", "Новое Описание подзадачи 2", newEpic1.getId());
+        SubTask newSubTask3 = new SubTask("Новая Подзадача 3", "Новое Описание подзадачи 3", newEpic1.getId());
+        taskManager.createTask(newSubTask1);
+        taskManager.createTask(newSubTask2);
+        taskManager.createTask(newSubTask3);
+
+        // Создаём эпик без подзадач
+        Epic newEpic2 = new Epic("Новый Эпик 2", "Новое Описание эпика 2");
+        taskManager.createTask(newEpic2);
+
+        // Запрашиваем созданные задачи несколько раз в разном порядке
+        taskManager.getTaskById(newTask1.getId());
+        taskManager.getEpicById(newEpic1.getId());
+        taskManager.getTaskById(newTask2.getId());
+        taskManager.getSubTaskById(newSubTask1.getId());
+        taskManager.getSubTaskById(newSubTask2.getId());
+        taskManager.getEpicById(newEpic2.getId());
+        taskManager.getSubTaskById(newSubTask3.getId());
+        taskManager.getTaskById(newTask1.getId()); // Повторный запрос
+
+        // Выводим историю и убеждаемся, что в ней нет повторов
+        System.out.println("История после запросов:");
+        for (Task t : historyManager.getHistory()) {
+            System.out.println(t);
+        }
+        System.out.println("Размер истории: " + historyManager.getHistory().size());
+
+        // Удаляем задачу, которая есть в истории, и проверяем, что при печати она не будет выводиться
+        taskManager.removeTaskById(newTask1.getId());
+        System.out.println("История после удаления задачи newTask1:");
+        for (Task t : historyManager.getHistory()) {
+            System.out.println(t);
+        }
+        System.out.println("Размер истории: " + historyManager.getHistory().size());
+
+        // Удаляем эпик с тремя подзадачами и убеждаемся, что из истории удалился как сам эпик, так и все его подзадачи
+        taskManager.removeEpicById(newEpic1.getId());
+        System.out.println("История после удаления эпика newEpic1 с подзадачами:");
+        for (Task t : historyManager.getHistory()) {
+            System.out.println(t);
+        }
+        System.out.println("Размер истории: " + historyManager.getHistory().size());
     }
 }

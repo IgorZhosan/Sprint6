@@ -2,8 +2,8 @@ package service;
 
 import model.Epic;
 import model.Status;
-import model.Task;
 import model.SubTask;
+import model.Task;
 
 import java.util.*;
 
@@ -17,37 +17,18 @@ public class InMemoryTaskManager implements TaskManager {
         this.historyManager = historyManager;
     }
 
-
     @Override
     public List<Task> getAllTasks() {
-        if (tasks.isEmpty()) {
-            System.out.println("Список задач пуст");
-        }
-        for (Task task : tasks.values()) {
-            historyManager.add(task);
-        }
         return new ArrayList<>(tasks.values());
     }
 
     @Override
     public List<Epic> getAllEpics() {
-        if (epics.isEmpty()) {
-            System.out.println("Список задач пуст");
-        }
-        for (Epic epic : epics.values()) {
-            historyManager.add(epic);
-        }
         return new ArrayList<>(epics.values());
     }
 
     @Override
     public List<SubTask> getAllSubTasks() {
-        if (subTasks.isEmpty()) {
-            System.out.println("Список задач пуст");
-        }
-        for (SubTask subTask : subTasks.values()) {
-            historyManager.add(subTask);
-        }
         return new ArrayList<>(subTasks.values());
     }
 
@@ -65,26 +46,29 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void removeAllTasks() {
+        for (Integer id : tasks.keySet()) {
+            historyManager.remove(id);
+        }
         tasks.clear();
     }
 
     @Override
     public void removeAllEpics() {
-        for (Integer idEpic : epics.keySet()) {
-            Epic epic = epics.get(idEpic);
-            epic.deleteAllSubTasks();
+        for (Integer id : epics.keySet()) {
+            Epic epic = epics.get(id);
+            for (Integer subTaskId : epic.getSubTaskIds()) {
+                historyManager.remove(subTaskId);
+                subTasks.remove(subTaskId);
+            }
+            historyManager.remove(id);
         }
         epics.clear();
-        subTasks.clear(); //нет эпиков, нед подзадач
     }
 
     @Override
     public void removeAllSubTasks() {
-        for (Integer idSubTask : subTasks.keySet()) {
-            SubTask subTask = subTasks.get(idSubTask);
-            Epic epic = getEpicById(subTask.getEpicId());
-            epic.deleteAllSubTasks();
-            updateEpicStatusIfNeeded(epic);
+        for (Integer id : subTasks.keySet()) {
+            historyManager.remove(id);
         }
         subTasks.clear();
     }
@@ -92,42 +76,55 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void removeTaskById(int id) {
         tasks.remove(id);
+        historyManager.remove(id);
     }
 
     @Override
     public void removeEpicById(int id) {
         Epic epic = epics.get(id);
-        for (Integer indexSubTasks : epic.getSubTaskIds()) {
-            subTasks.remove(indexSubTasks);
+        for (Integer subTaskId : epic.getSubTaskIds()) {
+            historyManager.remove(subTaskId);
+            subTasks.remove(subTaskId);
         }
-        epic.deleteAllSubTasks();
+        historyManager.remove(id);
         epics.remove(id);
     }
 
     @Override
     public void removeSubTaskById(int id) {
-        Epic epic = epics.get(subTasks.get(id).getEpicId());
-        epic.deleteSubTaskById(subTasks.get(id).getEpicId());
+        SubTask subTask = subTasks.get(id);
+        Epic epic = epics.get(subTask.getEpicId());
+        epic.deleteSubTaskById(id);
+        historyManager.remove(id);
         subTasks.remove(id);
         updateEpicStatusIfNeeded(epic);
     }
 
     @Override
     public Task getTaskById(int idTask) {
-        historyManager.add(tasks.get(idTask));
-        return tasks.get(idTask);
+        Task task = tasks.get(idTask);
+        if (task != null) {
+            historyManager.add(task);
+        }
+        return task;
     }
 
     @Override
     public Epic getEpicById(int idEpic) {
-        historyManager.add(epics.get(idEpic));
-        return epics.get(idEpic);
+        Epic epic = epics.get(idEpic);
+        if (epic != null) {
+            historyManager.add(epic);
+        }
+        return epic;
     }
 
     @Override
-    public SubTask getSubTaskById(int SubTaskById) {
-        historyManager.add(subTasks.get(SubTaskById));
-        return subTasks.get(SubTaskById);
+    public SubTask getSubTaskById(int idSubTask) {
+        SubTask subTask = subTasks.get(idSubTask);
+        if (subTask != null) {
+            historyManager.add(subTask);
+        }
+        return subTask;
     }
 
     @Override
@@ -153,6 +150,7 @@ public class InMemoryTaskManager implements TaskManager {
         Task task = tasks.get(updateTask.getId());
         task.setTitle(updateTask.getTitle());
         task.setDescription(updateTask.getDescription());
+        task.setStatus(updateTask.getStatus());
     }
 
     @Override
@@ -167,33 +165,33 @@ public class InMemoryTaskManager implements TaskManager {
         SubTask subTask = subTasks.get(updateSubTask.getId());
         subTask.setTitle(updateSubTask.getTitle());
         subTask.setDescription(updateSubTask.getDescription());
+        subTask.setStatus(updateSubTask.getStatus());
         Epic epic = epics.get(subTask.getEpicId());
         updateEpicStatusIfNeeded(epic);
     }
 
     @Override
     public void updateEpicStatusIfNeeded(Epic epic) {
-
-        Epic newEpic = epics.get(epic.getId());
-        List<SubTask> subTasks = getAllSubTasksById(newEpic.getId());
-
+        List<SubTask> subTasks = getAllSubTasksById(epic.getId());
         boolean allSubTasksDone = !subTasks.isEmpty();
         boolean allSubTasksNew = true;
 
         for (SubTask subTask : subTasks) {
             if (subTask != null) {
-                allSubTasksDone = allSubTasksDone & subTask.getStatus().equals(Status.DONE);
-                allSubTasksNew = allSubTasksNew & subTask.getStatus().equals(Status.NEW);
+                allSubTasksDone = allSubTasksDone && subTask.getStatus().equals(Status.DONE);
+                allSubTasksNew = allSubTasksNew && subTask.getStatus().equals(Status.NEW);
             }
         }
 
         allSubTasksNew = allSubTasksNew || subTasks.isEmpty();
 
-        if (allSubTasksDone) epic.setStatus(Status.DONE);
-
-        if (allSubTasksNew) epic.setStatus(Status.NEW);
-
-        if (!allSubTasksDone && !allSubTasksNew) epic.setStatus(Status.IN_PROGRESS);
+        if (allSubTasksDone) {
+            epic.setStatus(Status.DONE);
+        } else if (allSubTasksNew) {
+            epic.setStatus(Status.NEW);
+        } else {
+            epic.setStatus(Status.IN_PROGRESS);
+        }
     }
 
     @Override
@@ -201,4 +199,3 @@ public class InMemoryTaskManager implements TaskManager {
         return new ArrayList<>(historyManager.getHistory());
     }
 }
-
