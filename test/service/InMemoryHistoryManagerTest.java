@@ -1,27 +1,27 @@
-package tests.service;
+package service;
 
 import model.Task;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import service.HistoryManager;
-import service.InMemoryHistoryManager;
 
 public class InMemoryHistoryManagerTest {
 
     private HistoryManager historyManager;
+    private Task task1;
+    private Task task2;
+    private Task task3;
 
     @BeforeEach
     void setUp() {
         historyManager = new InMemoryHistoryManager();
+        task1 = new Task("Task 1", "Description 1");
+        task2 = new Task("Task 2", "Description 2");
+        task3 = new Task("Task 3", "Description 3");
     }
 
     @Test
     void shouldAddAndRemoveTasksFromHistory() {
-        Task task1 = new Task("Task 1", "Description 1");
-        Task task2 = new Task("Task 2", "Description 2");
-        Task task3 = new Task("Task 3", "Description 3");
-
         historyManager.add(task1);
         historyManager.add(task2);
         historyManager.add(task3);
@@ -35,8 +35,6 @@ public class InMemoryHistoryManagerTest {
 
     @Test
     void shouldNotContainDuplicates() {
-        Task task1 = new Task("Task 1", "Description 1");
-
         historyManager.add(task1);
         historyManager.add(task1); // Duplicate add
 
@@ -45,10 +43,6 @@ public class InMemoryHistoryManagerTest {
 
     @Test
     void shouldMaintainOrderAfterRemoval() {
-        Task task1 = new Task("Task 1", "Description 1");
-        Task task2 = new Task("Task 2", "Description 2");
-        Task task3 = new Task("Task 3", "Description 3");
-
         historyManager.add(task1);
         historyManager.add(task2);
         historyManager.add(task3);

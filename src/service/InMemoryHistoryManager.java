@@ -11,16 +11,6 @@ public class InMemoryHistoryManager implements HistoryManager {
     private static final int SIZE_HISTORY = 10;
     private int currentSize = 0;
 
-    private static class Node {
-        Task task;
-        Node prev;
-        Node next;
-
-        public Node(Task task) {
-            this.task = task;
-        }
-    }
-
     private void linkLast(Task task) {
         Node newNode = new Node(task);
         if (tail == null) {

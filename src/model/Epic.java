@@ -13,17 +13,19 @@ public class Epic extends Task {
     public Set<Integer> getSubTaskIds() {
         return subTaskIds;
     }
+
     public void addingSubTasks(int id) {
         subTaskIds.add(id);
     }
 
-    public void deleteAllSubTasks(){
+    public void deleteAllSubTasks() {
         subTaskIds.clear();
     }
 
     public void deleteSubTaskById(int id) {
         subTaskIds.remove(id);
     }
+
     @Override
     public String toString() {
         return "Epic{" +
@@ -34,5 +36,4 @@ public class Epic extends Task {
                 ", subTaskIds=" + getSubTaskIds() +
                 '}';
     }
-
 }
