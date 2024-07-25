@@ -18,4 +18,22 @@ public class Epic extends Task {
         subTaskIds.add(id);
     }
 
+    public void deleteAllSubTasks() {
+        subTaskIds.clear();
+    }
+
+    public void deleteSubTaskById(int id) {
+        subTaskIds.remove(id);
+    }
+
+    @Override
+    public String toString() {
+        return "Epic{" +
+                "id=" + getId() +
+                ", title='" + getTitle() + '\'' +
+                ", description='" + getDescription() + '\'' +
+                ", status=" + getStatus() +
+                ", subTaskIds=" + getSubTaskIds() +
+                '}';
+    }
 }
