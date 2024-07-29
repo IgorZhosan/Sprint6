@@ -128,12 +128,12 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void createTask(Task task) {
+    public void createTask(Task task) throws ManagerSaveException {
         tasks.put(task.getId(), task);
     }
 
     @Override
-    public void createTask(Epic epic) {
+    public void createTask(Epic epic) throws ManagerSaveException {
         epics.put(epic.getId(), epic);
     }
 
