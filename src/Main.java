@@ -12,9 +12,8 @@ public class Main {
         Manager manager = new Manager();
         TaskManager taskManager = manager.getDefault();
         HistoryManager historyManager = new InMemoryHistoryManager();
-        Path path = Paths.get("C:\\yp\\testingfiles\\tasks.csv");
-        FileBackedTaskManager fbtm = new FileBackedTaskManager(historyManager, path.toString());
-        fbtm.createTask(new Task("Тест", "проверка"));
+
+        taskManager.createTask(new Task("Тест", "проверка"));
 
         // Ваш существующий код
         System.out.println("=========Эпики======");
