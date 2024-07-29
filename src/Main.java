@@ -12,11 +12,10 @@ public class Main {
     public static void main(String[] args) throws Exception {
         Manager manager = new Manager();
         TaskManager taskManager = manager.getDefault();
-        HistoryManager historyManager = manager.getHistoryManager();
-        Path path = Paths.get("C:\\yp\\testingfiles");
-        FileBackedTaskManager fbtm = new FileBackedTaskManager(historyManager);
-
-        fbtm.createFile();
+        HistoryManager historyManager = new InMemoryHistoryManager();
+        Path path = Paths.get("C:\\yp\\testingfiles\\tasks.csv");
+        FileBackedTaskManager fbtm = new FileBackedTaskManager(historyManager, path.toString());
+        fbtm.createTask(new Task("Тест", "проверка"));
 
 //        // Ваш существующий код
 //        System.out.println("=========Эпики======");
