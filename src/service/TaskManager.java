@@ -33,9 +33,9 @@ public interface TaskManager {
 
     SubTask getSubTaskById(int subTaskById);
 
-    void createTask(Task task);
+    void createTask(Task task) throws ManagerSaveException;
 
-    void createTask(Epic epic);
+    void createTask(Epic epic) throws ManagerSaveException;
 
     void createTask(SubTask subTask);
 

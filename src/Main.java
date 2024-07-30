@@ -4,11 +4,14 @@ import model.SubTask;
 import model.Task;
 import service.*;
 
+
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         Manager manager = new Manager();
         TaskManager taskManager = manager.getDefault();
-        HistoryManager historyManager = manager.getHistoryManager();
+        HistoryManager historyManager = new InMemoryHistoryManager();
+
+        taskManager.createTask(new Task("Тест", "проверка"));
 
         // Ваш существующий код
         System.out.println("=========Эпики======");
