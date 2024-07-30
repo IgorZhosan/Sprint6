@@ -5,6 +5,10 @@ import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -27,7 +31,16 @@ public class FileBackedTaskManagerTest {
     }
 
     @Test
-    public void shouldQuantityRecordsInFile() {
-
+    public void shouldQuantityRecordsInFile() throws RuntimeException {
+        int count = 0;
+        try (Reader reader = new FileReader("Sprint6/resources/tasks.csv");
+             BufferedReader bf = new BufferedReader(reader)) {
+            while (bf.readLine() != null) {
+                count++;
+            }
+        } catch (IOException e) {
+            throw new ManagerSaveException("Не удалось прочитать файл");
+        }
+        Assertions.assertEquals(count, 3);
     }
 }
