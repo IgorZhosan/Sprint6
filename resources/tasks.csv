@@ -1,4 +1,14 @@
-id,type,name,status,description,epic
-4,EPIC,TEST,NEW,DESCTEST,
-5,EPIC,TEST,NEW,DESCTEST,
-6,EPIC,TEST,NEW,DESCTEST,
+id,type,name,status,description,startTime,duration,epicId
+16,TASK,Убрать гараж,NEW,Сегодня,null,null,null
+17,TASK,Убрать подсопку,NEW,Сегодня,null,null,null
+18,TASK,Убрать бар,NEW,Сегодня,null,null,null
+19,TASK,Убрать кладовку,NEW,Сегодня,null,null,null
+20,TASK,Убрать машиноместо,NEW,Сегодня,null,null,null
+21,TASK,Убрать листья,NEW,Сегодня,null,null,null
+23,TASK,Новая Задача 2,NEW,Новое Описание 2,null,null,null
+11,TASK,Убрать сад,NEW,Сегодня,null,null,null
+12,TASK,Убрать огород,NEW,Сегодня,null,null,null
+13,TASK,Убрать машину,NEW,Сегодня,null,null,null
+14,TASK,Убрать лужайку,NEW,Сегодня,null,null,null
+5,EPIC,Собрать овощи,IN_PROGRESS,быстро,null,0,null
+28,EPIC,Новый Эпик 2,NEW,Новое Описание эпика 2,null,0,null
