@@ -25,5 +25,6 @@ public class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskMan
         }
 
         taskManager = new FileBackedTaskManager(historyManager, FILE_PATH);
+        super.setUp();
     }
 }

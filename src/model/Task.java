@@ -57,7 +57,9 @@ public class Task {
         this.endTime = calculateEndTime();
     }
 
-    public Task(int id, String title, String description, Status status, TaskType type, LocalDateTime startTime, Duration duration) {
+    public Task(int id, String title, String description,
+                Status status, TaskType type,
+                LocalDateTime startTime, Duration duration) {
         this.id = id;
         this.title = title;
         this.description = description;
@@ -132,15 +134,19 @@ public class Task {
         return endTime;
     }
 
+    public void setEndTime(LocalDateTime endTime) {
+        this.endTime = endTime;
+    }
+
     @Override
     public String toString() {
         return "Task{" +
-                "title='" + title + '\'' +
-                ", description='" + description + '\'' +
-                ", idTask=" + idTask +
-                ", status=" + status +
-                ", startTime=" + startTime +
-                ", duration=" + duration +
+                "title='" + getTitle() + '\'' +
+                ", description='" + getDescription() + '\'' +
+                ", idTask=" + getId() +
+                ", status=" + getStatus() +
+                ", startTime=" + getStartTime() +
+                ", duration=" + getEndTime() +
                 '}';
     }
 }

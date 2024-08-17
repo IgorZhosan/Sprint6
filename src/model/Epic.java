@@ -15,21 +15,30 @@ public class Epic extends Task {
         super(title, desc, Status.NEW, TaskType.EPIC);
         this.duration = Duration.ZERO;
         this.setStartTime(null);
-        this.endTime = null;
+        this.setEndTime(null);
+    }
+
+    public void setEndTime(LocalDateTime endTime) {
+        this.endTime = endTime;
     }
 
     public Epic(int id, String title, String desc) {
         super(id, title, desc, Status.NEW, TaskType.EPIC);
         this.duration = Duration.ZERO;
         this.setStartTime(null);
-        this.endTime = null;
+        this.setEndTime(null);
+    }
+
+    @Override
+    public void setDuration(Duration duration) {
+        this.duration = duration;
     }
 
     public void calculateEpicDurationAndTime(Set<SubTask> subTasks) {
         if (subTasks.isEmpty()) {
             this.duration = Duration.ZERO;
             this.setStartTime(null);
-            this.endTime = null;
+            this.setEndTime(null);
             return;
         }
 
@@ -40,20 +49,18 @@ public class Epic extends Task {
                 .orElse(null);
 
         LocalDateTime latestEnd = subTasks.stream()
-                .map(SubTask::getEndTime)
+                .map(subTask -> subTask.getStartTime().plus(subTask.getDuration()))
                 .filter(endTime -> endTime != null)
                 .max(LocalDateTime::compareTo)
                 .orElse(null);
 
+        Duration calculatedDuration = (earliestStart != null && latestEnd != null)
+                ? Duration.between(earliestStart, latestEnd)
+                : Duration.ZERO;
 
-        Duration totalDuration = subTasks.stream()
-                .map(SubTask::getDuration)
-                .reduce(Duration.ZERO, Duration::plus);
-
-        // Устанавливаем рассчитанные значения для эпика
         this.setStartTime(earliestStart);
-        this.endTime = latestEnd;
-        this.duration = totalDuration;
+        this.setEndTime(latestEnd);
+        this.setDuration(calculatedDuration);
     }
 
     public LocalDateTime getEndTime() {
@@ -80,8 +87,18 @@ public class Epic extends Task {
         subTaskIds.remove(id);
     }
 
+
     @Override
     public String toString() {
-        return "Epic{" + "id=" + getId() + ", title='" + getTitle() + '\'' + ", description='" + getDescription() + '\'' + ", status=" + getStatus() + ", subTaskIds=" + getSubTaskIds() + ", startTime=" + getStartTime() + ", endTime=" + getEndTime() + ", duration=" + getDuration() + '}';
+        return "Epic{" +
+                "id=" + getId() +
+                ", title='" + getTitle() + '\'' +
+                ", description='" + getDescription() + '\'' +
+                ", status=" + getStatus() +
+                ", subTaskIds=" + getSubTaskIds() +
+                ", startTime=" + getStartTime() +
+                ", endTime=" + getEndTime() +
+                ", duration=" + getDuration() +
+                '}';
     }
 }
