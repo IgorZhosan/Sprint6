@@ -71,6 +71,17 @@ public class Task {
         this.idTask = generateId();
     }
 
+    public Task(String title, String description, Duration duration, LocalDateTime startTime) {
+        this.title = title;
+        this.description = description;
+        this.idTask = generateId();
+        this.status = Status.NEW; // Новый статус по умолчанию
+        this.type = TaskType.TASK; // Тип задачи по умолчанию
+        this.startTime = startTime;
+        this.duration = duration;
+        this.endTime = calculateEndTime();
+    }
+
     private int generateId() {
         return ++id;
     }
