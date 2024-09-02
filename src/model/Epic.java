@@ -7,13 +7,11 @@ import java.util.Set;
 
 public class Epic extends Task {
     private final Set<Integer> subTaskIds = new HashSet<>();
-
     private LocalDateTime endTime;
-    private Duration duration;
 
     public Epic(String title, String desc) {
         super(title, desc, Status.NEW, TaskType.EPIC);
-        this.duration = Duration.ZERO;
+        this.setDuration(Duration.ZERO);
         this.setStartTime(null);
         this.setEndTime(null);
     }
@@ -24,19 +22,14 @@ public class Epic extends Task {
 
     public Epic(int id, String title, String desc) {
         super(id, title, desc, Status.NEW, TaskType.EPIC);
-        this.duration = Duration.ZERO;
+        this.setDuration(Duration.ZERO);
         this.setStartTime(null);
         this.setEndTime(null);
     }
 
-    @Override
-    public void setDuration(Duration duration) {
-        this.duration = duration;
-    }
-
     public void calculateEpicDurationAndTime(Set<SubTask> subTasks) {
         if (subTasks.isEmpty()) {
-            this.duration = Duration.ZERO;
+            this.setDuration(Duration.ZERO);
             this.setStartTime(null);
             this.setEndTime(null);
             return;
@@ -67,10 +60,6 @@ public class Epic extends Task {
         return endTime;
     }
 
-    public Duration getDuration() {
-        return duration;
-    }
-
     public Set<Integer> getSubTaskIds() {
         return subTaskIds;
     }
@@ -86,7 +75,6 @@ public class Epic extends Task {
     public void deleteSubTaskById(int id) {
         subTaskIds.remove(id);
     }
-
 
     @Override
     public String toString() {

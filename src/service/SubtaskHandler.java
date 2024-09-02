@@ -3,7 +3,6 @@ package service;
 import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
 import model.SubTask;
-import service.TaskManager;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -31,21 +30,17 @@ public class SubtaskHandler extends BaseHttpHandler {
                 String response = gson.toJson(taskManager.getAllSubTasks());
                 sendText(exchange, response, 200);
             } else if (segments.length == 3) {
-                // GET /subtasks/{id} - получение подзадачи по id
                 handleGetSubtaskById(exchange, segments[2]);
             } else {
                 sendNotFound(exchange);
             }
         } else if (method.equals("POST")) {
-            // POST /subtasks - создание новой подзадачи
             handleCreateOrUpdateSubtask(exchange);
         } else if (method.equals("DELETE")) {
             if (segments.length == 2) {
-                // DELETE /subtasks - удаление всех подзадач
                 taskManager.removeAllSubTasks();
                 sendText(exchange, "All subtasks deleted", 200);
             } else if (segments.length == 3) {
-                // DELETE /subtasks/{id} - удаление подзадачи по id
                 handleDeleteSubtaskById(exchange, segments[2]);
             } else {
                 sendNotFound(exchange);

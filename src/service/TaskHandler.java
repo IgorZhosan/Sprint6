@@ -3,11 +3,9 @@ package service;
 import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
 import model.Task;
-import service.TaskManager;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 
