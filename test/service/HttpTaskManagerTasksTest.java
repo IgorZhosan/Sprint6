@@ -27,7 +27,7 @@ public class HttpTaskManagerTasksTest {
     private Gson gson;
 
     @BeforeEach
-    public void setUp() throws IOException, InterruptedException {
+    public void setUp() throws IOException {
         // Создание экземпляров перед каждым тестом
         HistoryManager historyManager = new InMemoryHistoryManager();
         this.manager = new InMemoryTaskManager(historyManager);

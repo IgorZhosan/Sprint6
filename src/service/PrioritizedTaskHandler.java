@@ -3,8 +3,6 @@ package service;
 import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
 
-import java.io.IOException;
-
 public class PrioritizedTaskHandler extends BaseHttpHandler {
     private final TaskManager taskManager;
     private final Gson gson;
