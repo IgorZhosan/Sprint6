@@ -26,26 +26,23 @@ public class HttpTaskManagerTasksTest {
     private HttpTaskServer taskServer;
     private Gson gson;
 
-    public HttpTaskManagerTasksTest() throws IOException {
-        // создаём экземпляр InMemoryTaskManager с HistoryManager
+    @BeforeEach
+    public void setUp() throws IOException, InterruptedException {
+        // Создание экземпляров перед каждым тестом
         HistoryManager historyManager = new InMemoryHistoryManager();
         this.manager = new InMemoryTaskManager(historyManager);
         this.taskServer = new HttpTaskServer(manager);
-
         this.gson = new GsonBuilder()
                 .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
                 .registerTypeAdapter(Duration.class, new DurationAdapter())
                 .create();
-    }
 
-    @BeforeEach
-    public void setUp() throws InterruptedException {
+        // Удаление всех задач, эпиков и подзадач перед каждым тестом
         manager.removeAllTasks();
         manager.removeAllSubTasks();
         manager.removeAllEpics();
         taskServer.start();
     }
-
 
     @AfterEach
     public void shutDown() {

@@ -4,7 +4,6 @@ import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
 import model.Task;
 
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;
@@ -19,42 +18,46 @@ public class TaskHandler extends BaseHttpHandler {
     }
 
     @Override
-    public void handle(HttpExchange exchange) throws IOException {
+    public void handle(HttpExchange exchange) {
         String method = exchange.getRequestMethod();
         String path = exchange.getRequestURI().getPath();
         String[] segments = path.split("/");
 
-        if (method.equals("GET")) {
-            if (segments.length == 2) {
-                // GET /tasks - получение всех задач
-                String response = gson.toJson(taskManager.getAllTasks());
-                sendText(exchange, response, 200);
-            } else if (segments.length == 3) {
-                // GET /tasks/{id} - получение задачи по id
-                handleGetTaskById(exchange, segments[2]);
+        try {
+            if (method.equals("GET")) {
+                if (segments.length == 2) {
+                    // GET /tasks - получение всех задач
+                    String response = gson.toJson(taskManager.getAllTasks());
+                    sendText(exchange, response, 200);
+                } else if (segments.length == 3) {
+                    // GET /tasks/{id} - получение задачи по id
+                    handleGetTaskById(exchange, segments[2]);
+                } else {
+                    sendNotFound(exchange);
+                }
+            } else if (method.equals("POST")) {
+                // POST /tasks - создание новой задачи
+                handleCreateOrUpdateTask(exchange);
+            } else if (method.equals("DELETE")) {
+                if (segments.length == 2) {
+                    // DELETE /tasks - удаление всех задач
+                    taskManager.removeAllTasks();
+                    sendText(exchange, "All tasks deleted", 200);
+                } else if (segments.length == 3) {
+                    // DELETE /tasks/{id} - удаление задачи по id
+                    handleDeleteTaskById(exchange, segments[2]);
+                } else {
+                    sendNotFound(exchange);
+                }
             } else {
-                sendNotFound(exchange);
+                sendText(exchange, "{\"error\":\"Method Not Allowed\"}", 405);
             }
-        } else if (method.equals("POST")) {
-            // POST /tasks - создание новой задачи
-            handleCreateOrUpdateTask(exchange);
-        } else if (method.equals("DELETE")) {
-            if (segments.length == 2) {
-                // DELETE /tasks - удаление всех задач
-                taskManager.removeAllTasks();
-                sendText(exchange, "All tasks deleted", 200);
-            } else if (segments.length == 3) {
-                // DELETE /tasks/{id} - удаление задачи по id
-                handleDeleteTaskById(exchange, segments[2]);
-            } else {
-                sendNotFound(exchange);
-            }
-        } else {
-            sendText(exchange, "{\"error\":\"Method Not Allowed\"}", 405);
+        } catch (Exception e) {
+            sendText(exchange, "{\"error\":\"Internal Server Error\"}", 500);
         }
     }
 
-    private void handleGetTaskById(HttpExchange exchange, String idStr) throws IOException {
+    private void handleGetTaskById(HttpExchange exchange, String idStr) {
         try {
             int id = Integer.parseInt(idStr);
             Task task = taskManager.getTaskById(id);
@@ -69,11 +72,10 @@ public class TaskHandler extends BaseHttpHandler {
         }
     }
 
-    private void handleCreateOrUpdateTask(HttpExchange exchange) throws IOException {
-        InputStreamReader isr = new InputStreamReader(exchange.getRequestBody(), StandardCharsets.UTF_8);
-        Task task = gson.fromJson(isr, Task.class);
+    private void handleCreateOrUpdateTask(HttpExchange exchange) {
+        try (InputStreamReader isr = new InputStreamReader(exchange.getRequestBody(), StandardCharsets.UTF_8)) {
+            Task task = gson.fromJson(isr, Task.class);
 
-        try {
             Optional<Task> existingTask = Optional.ofNullable(taskManager.getTaskById(task.getId()));
             if (existingTask.isPresent()) {
                 taskManager.updateTask(task);
@@ -84,10 +86,12 @@ public class TaskHandler extends BaseHttpHandler {
             }
         } catch (IllegalArgumentException e) {
             sendHasInteractions(exchange);
+        } catch (Exception e) {
+            sendText(exchange, "{\"error\":\"Bad Request\"}", 400);
         }
     }
 
-    private void handleDeleteTaskById(HttpExchange exchange, String idStr) throws IOException {
+    private void handleDeleteTaskById(HttpExchange exchange, String idStr) {
         try {
             int id = Integer.parseInt(idStr);
             Task task = taskManager.getTaskById(id);

@@ -15,7 +15,7 @@ public class HistoryHandler extends BaseHttpHandler {
     }
 
     @Override
-    public void handle(HttpExchange exchange) throws IOException {
+    public void handle(HttpExchange exchange) {
         if ("GET".equals(exchange.getRequestMethod())) {
             String response = gson.toJson(taskManager.getHistory());
             sendText(exchange, response, 200);

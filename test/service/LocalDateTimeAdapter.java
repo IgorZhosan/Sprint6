@@ -10,15 +10,15 @@ import java.time.format.DateTimeFormatter;
 
 public class LocalDateTimeAdapter extends TypeAdapter<LocalDateTime> {
 
-    private final DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
+    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
 
     @Override
     public void write(JsonWriter out, LocalDateTime value) throws IOException {
-        out.value(value.format(formatter));
+        out.value(value.format(FORMATTER));
     }
 
     @Override
     public LocalDateTime read(JsonReader in) throws IOException {
-        return LocalDateTime.parse(in.nextString(), formatter);
+        return LocalDateTime.parse(in.nextString(), FORMATTER);
     }
 }
